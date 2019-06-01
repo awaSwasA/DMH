@@ -1,0 +1,28 @@
+{
+  "name": "dual-monitor-helper",
+  "version": "1.0.0",
+  "description": "dmp-dual-monitor-helper",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awaSwasA/dmh.git"
+  },
+  "author": "Sato Sawa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/awaSwasA/dmh/issues"
+  },
+  "homepage": "https://github.com/awaSwasA/dmh#readme",
+  "devDependencies": {
+    "electron": "^5.0.2"
+  },
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.4.1",
+    "materialize-css": "^1.0.0",
+    "simplebar": "^4.0.0"
+  }
+}
