@@ -1,5 +1,8 @@
 let $ = require('jquery')
 const exec = require('child_process').exec;
+let monitors_Group = [];
+
+
 
 
 $(document).ready(function(){
@@ -7,7 +10,25 @@ $(document).ready(function(){
 })
 
 $('#reload-bt').on('click', () => {
+    $("#monitor-group").html(`<center>
+    <div class = "preloader-wrapper small active">
+        <div class = "spinner-layer spinner-blue-only">
+           <div class = "circle-clipper left">
+              <div class = "circle"></div>
+           </div>
+           
+           <div class = "gap-patch">
+              <div class = "circle"></div>
+           </div>
+           
+           <div class = "circle-clipper right">
+              <div class = "circle"></div>
+           </div>
+        </div>
+     </div>
+    </center>`);
     load_current_display();
+    M.toast({html: 'Actived monitors has been loaded', classes: 'rounded'});
 })
 
 
@@ -37,9 +58,15 @@ function updateMonitorList(mon_data) {
         
         updated_data +=
         `</p> 
-        <a class="waves-effect waves-light blue btn-small secondary-content collapsible">
+        <div class="secondary-content ">
+        <a class="waves-effect waves-light blue btn-small collapsible">
         <font color="white">Modes</font>
         </a>
+        <a class="waves-effect waves-light green btn-small fix-collapsible">
+        <font color="white">  <i class="material-icons medium">add</i>
+        </font>
+        </a>
+        </div>
         <div class="content">
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
         </div>
@@ -48,14 +75,32 @@ function updateMonitorList(mon_data) {
     $('#monitor-group').html(updated_data);
 }
 
+function newMode_handler(evt) {
+    var elem= document.querySelector('.modal');
+    var instance = M.Modal.init(elem);
+    instance.open();
+    console.log(monitors_Group[evt.currentTarget.i]["interface"]);
+    $("#mon-title").html(monitors_Group[evt.currentTarget.i]["interface"]);
+}
+
+function regNewMode() {
+    var coll = document.querySelectorAll('.fix-collapsible');
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].i = i;
+        coll[i].addEventListener("click", newMode_handler, false);
+    }
+}
+
 function expandList() {
-    var coll = document.getElementsByClassName("collapsible");
+    var coll = document.querySelectorAll('.collapsible');
     var i;
 
     for (i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function() {
         this.classList.toggle("active");
-        var content = this.nextElementSibling;
+        var content = this.parentNode.nextElementSibling;
         if (content.style.maxHeight){
         content.style.maxHeight = null;
         } else {
@@ -108,9 +153,12 @@ function load_current_display(){
             mon_info["primary"] = result_temp[result_temp.length - 4].includes("*");
             monitor_array.push(mon_info);
         }
+        // update logical structure
+        monitors_Group = monitor_array;
         updateMonitorList(monitor_array);
         expandList();
         load_display_reslist();
+        regNewMode();
     });
 }
 
@@ -118,7 +166,9 @@ function load_display_reslist(){
     execute('xrandr', (output) => {
         spilt_result = output.split(/connected|disconnected/);
         var monitor_array = [];
+        var counter = 0;
         spilt_result.forEach((element,index)=> {
+            var profile_array = [];
             if (index % 2 && check_line_num(element) > 2){
                 var element_arr = element.split("\n");
                 var new_element = `
@@ -131,14 +181,23 @@ function load_display_reslist(){
                 element_arr.forEach( (innerElement, innerIndex) => {
                     if (innerIndex!=0 && innerIndex!=element_arr.length-1){
                         var reslv = innerElement.split("     ")[0];
-                        console.log(innerElement);
                         var rate = innerElement.split("     ")[1];
                         new_element+= "<tr><td>" + reslv + "</td><td>" + rate + "</td></tr>";
-
+                        // remove all spaces in reslv
+                        reslv = reslv.replace(/\s/g, '');
+                        
+                        var againRate = rate.split("   ");
+                        againRate.forEach((rateChild, rateIndex, rateArray) => {
+                            rateArray[rateIndex] = rateArray[rateIndex].replace(/[\+\*\s]/g, '');
+                        })
+                        var temparray = [reslv, againRate];
+                        profile_array.push(temparray);
                     }
                 });
                 new_element += "</table>";
                 monitor_array.push(new_element);
+                monitors_Group[counter]["profiles"] = [];
+                monitors_Group[counter++]["profiles"] = profile_array;
             }
         });
         updateResList(monitor_array);

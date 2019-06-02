@@ -9,6 +9,37 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/> 
     <style>
+      @font-face {
+        font-family: 'Material Icons';
+        font-style: normal;
+        font-weight: 400;
+        src: url(./fonts/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+      }
+
+      .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-flex;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+        vertical-align: bottom;
+      }
+
+      .fix-collapsible {
+        border-top: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        margin: 0.5rem 0 1rem 0;
+      }
+
       .monitor-items {
         overflow: auto;
         height: 300px;
@@ -51,7 +82,12 @@
         transition: max-height 0.2s ease-out;
         background-color: #f1f1f1;
         border-radius: 15px;
-      }    
+      }
+      .rounded {
+        border-radius: 50px !important;
+        background-color: #2979ff;
+        opacity: 0.8 !important;
+      }
     </style>
   </head>
   <body>
@@ -60,69 +96,47 @@
       </div>
     <div class="monitor-items"  data-simplebar data-simplebar-auto-hide="true">
       <ul id="monitor-group" class="collection">
-        <li class="collection-item avatar">
-          <img src="images/icons8-linux-server-80.png" alt="" class="mon-icon responsive-img">
-          <span class="title">eDP1</span>
-          <p>1920x1080 60hz
-
-              <br>
-              <div class="chip chipcolor">
-                  Primary
-              </div>
-          </p>
-          <a class="waves-effect waves-light blue btn-small secondary-content collapsible">
-            <font color="white">Modes</font>
-          </a>
-          <div class="content">
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-        </li>
-        <li class="collection-item avatar">
-            <img src="images/icons8-linux-server-80.png" alt="" class="mon-icon responsive-img">
-            <span class="title">eDP1</span>
-            <p>1920x1080 60hz
-
-                <br>
-                <div class="chip chipcolor">
-                    Primary
-                </div>
-            </p>
-            <a class="waves-effect waves-light blue btn-small secondary-content collapsible">
-                <font color="white">Modes</font>
-              </a>
-              <div class="content">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                </div>
-          </li>
-          <li class="collection-item avatar">
-            <img src="images/icons8-linux-server-80.png" alt="" class="mon-icon responsive-img">
-            <span class="title">eDP1</span>
-            <p>1920x1080 60hz
-
-                <br>
-                <div class="chip chipcolor">
-                    Primary
-                </div>
-            </p>
-            <a class="waves-effect waves-light blue btn-small secondary-content collapsible">
-              <font color="white">Modes</font>
-            </a>
-            <div class="content">
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-          </li>
-        </ul>
+      <!-- reserved -->
+      <center>
+      <div class = "preloader-wrapper small active">
+          <div class = "spinner-layer spinner-blue-only">
+             <div class = "circle-clipper left">
+                <div class = "circle"></div>
+             </div>
+             
+             <div class = "gap-patch">
+                <div class = "circle"></div>
+             </div>
+             
+             <div class = "circle-clipper right">
+                <div class = "circle"></div>
+             </div>
+          </div>
+       </div>
+      </center>
+      </ul>
     </div>
     <center>
       <a id="reload-bt" class="waves-effect waves-light blue accent-3 btn"><font color="white">Reload</font></a>
     </center>
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal">
 
+      <div class="modal-content">
+        <div id="mon-title"></div>
+        <p style='font-size:12px;'><i class="material-icons">warning</i> DMH will not apply display modes</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-light blue accent-3  btn">Confirm</a>
+      </div>
+    </div>
     <div class="footer">
     Node <script>document.write(process.versions.node)</script>
     Chrome <script>document.write(process.versions.chrome)</script>
     Electron <script>document.write(process.versions.electron)</script>
     </div>
     <script src = "./load.js" ></script>
+    <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="node_modules/materialize-css/dist/js/materialize.min.js"></script>
     <script type="text/javascript" src="node_modules/simplebar/dist/simplebar.min.js"></script>
   </body>
