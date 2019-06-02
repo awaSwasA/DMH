@@ -4,7 +4,7 @@ const { BrowserWindow } = require('electron')
 var path = require('path')
 
 const defaultProps = {
-    width: 600,
+    width: 650,
     height: 450,
     show: false,
     icon: path.join(__dirname, 'images/icons8-monitor.png')
