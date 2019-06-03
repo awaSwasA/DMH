@@ -80,7 +80,7 @@ function newMode_handler(evt) {
     var instance = M.Modal.init(elem);
     instance.open();
     console.log(monitors_Group[evt.currentTarget.i]["interface"]);
-    $("#mon-title").html(monitors_Group[evt.currentTarget.i]["interface"]);
+    $("#mon-title").html("<div class='dialog_dname'>&nbsp;" + monitors_Group[evt.currentTarget.i]["interface"] + "</div>");
 }
 
 function regNewMode() {
@@ -182,6 +182,8 @@ function load_display_reslist(){
                     if (innerIndex!=0 && innerIndex!=element_arr.length-1){
                         var reslv = innerElement.split("     ")[0];
                         var rate = innerElement.split("     ")[1];
+                        rate = rate.replace(/\+/g, '(preferred)');
+                        rate = rate.replace(/\*/g, '(current)');
                         new_element+= "<tr><td>" + reslv + "</td><td>" + rate + "</td></tr>";
                         // remove all spaces in reslv
                         reslv = reslv.replace(/\s/g, '');

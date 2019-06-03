@@ -33,6 +33,36 @@
         vertical-align: bottom;
       }
 
+
+      /* label color */
+      .input-field label {
+        color: #2979ff;
+      }
+      /* label focus color */
+      .input-field input[type=text]:focus + label {
+        color: #2979ff;
+      }
+      /* label underline focus color */
+      .input-field input[type=text]:focus {
+        border-bottom: 1px solid #2979ff;
+        box-shadow: 0 1px 0 0 #2979ff;
+      }
+      /* valid color */
+      .input-field input[type=text].valid {
+        border-bottom: 1px solid #2979ff;
+        box-shadow: 0 1px 0 0 #2979ff;
+      }
+      /* invalid color */
+      .input-field input[type=text].invalid {
+        border-bottom: 1px solid #2979ff;
+        box-shadow: 0 1px 0 0 #2979ff;
+      }
+      /* icon prefix focus color */
+      .input-field .prefix.active {
+        color: #2979ff;
+      }
+        
+
       .fix-collapsible {
         border-top: 1px solid #ddd;
         border-right: 1px solid #ddd;
@@ -88,6 +118,26 @@
         background-color: #2979ff;
         opacity: 0.8 !important;
       }
+      .dialog_dname {
+        font-size: 2em;
+        color: white;
+        background-color: #2979ff;
+        padding: 2px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+      .dialog-back {
+        position: absolute;
+        bottom: 0px;
+      }
+    
+      .rowbg {
+        background-color: #e2e2e2;
+        padding-top: 5px;
+        padding-right: 10px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
     </style>
   </head>
   <body>
@@ -124,10 +174,27 @@
 
       <div class="modal-content">
         <div id="mon-title"></div>
-        <p style='font-size:12px;'><i class="material-icons">warning</i> DMH will not apply display modes</p>
+        <div class="row rowbg">
+          <div class="input-field col s6">
+            <input value="1920" id="x-len" type="text" class="validate">
+            <label class="active" for="x-len"> X</label>
+          </div>
+          <div class="input-field col s6">
+            <input value="1080" id="y-len" type="text" class="validate">
+            <label class="active" for="y-len"> Y</label>
+          </div>
+          <div class="input-field col s6">
+            <input value="60" id="rate" type="text" class="validate">
+            <label class="active" for="rate"> Refresh Rate (hz)</label>
+          </div>
+          <div class="input-field inline">
+            <a class="btn-floating waves-effect waves-light green btn"><i class="material-icons">add</i></i></a>
+          </div>
+        </div>
+        <span style='font-size:12px;'><i class="material-icons">warning</i> DMH will not apply display modes</span>  
       </div>
       <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-light blue accent-3  btn">Confirm</a>
+        <a class="modal-close btn-floating waves-effect waves-light blue accent-3 btn dialog-back"><i class="material-icons">arrow_back</i></i></a>
       </div>
     </div>
     <div class="footer">
