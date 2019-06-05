@@ -7,8 +7,9 @@ const defaultProps = {
     width: 800,
     height: 450,
     show: false,
-    icon: path.join(__dirname, 'images/icons8-monitor.png')
+    icon: path.join(__dirname, 'images/icons8-monitor.png'),
 }
+
 
 class Window extends BrowserWindow {
     constructor ({ file, ...windowSettings }) {
