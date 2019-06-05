@@ -9,4 +9,22 @@ On some Linux distribution, newly connected monitor may not detect resolution pr
 
 ## Dependency
 - Xrandr
-- Electron
+
+## Installation
+```bash
+# Download Xrandr on Linux
+sudo pacman -S xorg-xrandr
+
+# Download repo
+git clone git@github.com:awaSwasA/dmh.git
+
+# Install require packages
+cd dmh
+npm install --save-dev
+
+# Generate Binary
+electron-packager .
+
+# Execute the application
+./dual-monitor-helper-linux-x64/dual-monitor-helper
+```
