@@ -1,12 +1,23 @@
 let $ = require('jquery')
 const exec = require('child_process').exec;
-let monitors_Group = [];
 
+let monitors_Group = [];
+let selected_monitor_id = null; // null indicate not selected
 
 
 
 $(document).ready(function(){
     $('#reload-bt').click();
+})
+
+$('#new_mode_bt').on('click', () => {
+    console.log(selected_monitor_id);
+    var x_param = $("#x-len").val();
+    var y_param = $("#y-len").val();
+    var rate_param = $("#rate").val();
+    var monitor_param = monitors_Group[selected_monitor_id]["interface"];
+
+    process_newMode(monitor_param, x_param, y_param, rate_param);
 })
 
 $('#reload-bt').on('click', () => {
@@ -75,11 +86,18 @@ function updateMonitorList(mon_data) {
     $('#monitor-group').html(updated_data);
 }
 
+// reset selected id to null
+var onModalClose = function() {
+    selected_monitor_id = null;
+};
+
+
 function newMode_handler(evt) {
     var elem= document.querySelector('.modal');
-    var instance = M.Modal.init(elem);
+    var instance = M.Modal.init(elem, { onCloseEnd: onModalClose });
     instance.open();
     console.log(monitors_Group[evt.currentTarget.i]["interface"]);
+    selected_monitor_id = monitors_Group[evt.currentTarget.i]["id"];
     $("#mon-title").html("<div class='dialog_dname'>&nbsp;" + monitors_Group[evt.currentTarget.i]["interface"] + "</div>");
 }
 
@@ -112,7 +130,7 @@ function expandList() {
 
 function execute(command, callback) {
     exec(command, (error, stdout, stderr) => { 
-        callback(stdout); 
+        callback(stdout, error, stderr); 
     });
 }
 
@@ -174,24 +192,46 @@ function load_display_reslist(){
                 var new_element = `
                 <table>
                 <tr>
-                    <th>resoultion</th>
+                    <th>resoultion profile</th>
                     <th>refresh rate</th>
                 <tr>
                 `;
                 element_arr.forEach( (innerElement, innerIndex) => {
                     if (innerIndex!=0 && innerIndex!=element_arr.length-1){
-                        var reslv = innerElement.split("     ")[0];
-                        var rate = innerElement.split("     ")[1];
-                        rate = rate.replace(/\+/g, '(preferred)');
-                        rate = rate.replace(/\*/g, '(current)');
-                        new_element+= "<tr><td>" + reslv + "</td><td>" + rate + "</td></tr>";
+                        console.log(innerElement.split(/ {2,}/));
+                        var reslv = innerElement.split(/ {2,}/)[1];
+                        var rate = innerElement.split(/ {2,}/);
+                        new_element+= "<tr><td>" + reslv + "</td><td>";
+                        var rate_html = "";
+                        for (var i = 2; i< rate.length; ++i){
+                            if (rate[i]!= ""){
+                                var curr = "";
+                                var pre = "";
+                                if (rate[i].match(/\*/g)){
+                                    curr = "current_rate";
+                                }
+                                if (rate[i].match(/\+/g)){
+                                    pre = "preferred_rate";
+                                }
+                                if (pre != "" && curr != ""){
+                                    pre = "ideal_rate";
+                                }
+                                rate[i] = rate[i].replace(/\+/g, '(preferred)');
+                                rate[i] = rate[i].replace(/\*/g, '(current)');
+                                rate_html += "<span class='rate_rounded " + curr + " "+ pre +" '>" + rate[i] + "</span> ";
+                            }
+                        }
+                        
+                        new_element += rate_html + "</td></tr>";
                         // remove all spaces in reslv
                         reslv = reslv.replace(/\s/g, '');
                         
-                        var againRate = rate.split("   ");
-                        againRate.forEach((rateChild, rateIndex, rateArray) => {
-                            rateArray[rateIndex] = rateArray[rateIndex].replace(/[\+\*\s]/g, '');
-                        })
+                        var againRate = [];
+                        for (var i = 2; i<rate.length; ++i){
+                            if (rate[i]!= ""){
+                                againRate.push(rate[i].replace(/[\+\*\s]/g, ''));
+                            }
+                        }
                         var temparray = [reslv, againRate];
                         profile_array.push(temparray);
                     }
@@ -203,5 +243,47 @@ function load_display_reslist(){
             }
         });
         updateResList(monitor_array);
+    });
+}
+
+function new_mode(monitor, modeline) {
+    execute("xrandr --newmode " + modeline, (output, stderr) => {
+        console.log("[new_mode][stdout] =>" + output);
+        console.log("[new_mode][stderr] => " + stderr);
+        if (stderr != null) {
+            var err_message = stderr.toString();
+            if (err_message.includes("X Error of failed request:  BadName (named color or font does not exist")){
+                // possibly modeline already exist
+                M.toast({html: '<i class="material-icons small green rounded" >check</i>&nbsp;&nbsp;Newmode: modeline already existed', classes: 'rounded'});
+            }else
+                alert(stderr);
+        }
+    });
+
+    // trim modeline profile name
+    modeline = modeline.split(" ")[1];
+    add_mode(monitor, modeline);
+}
+
+function add_mode(monitor, modeline){
+    var addmode = "xrandr --addmode " + monitor + " " + modeline;
+    console.log("addmode cmd => " + addmode);
+    execute(addmode, (output, stderr) => {
+        console.log("[add_mode][stdout] =>" + output);
+        console.log("[add_mode][stderr] => " + stderr);
+        if (output == "" && stderr == null){
+            M.toast({html: '<i class="material-icons small green rounded" >check</i>&nbsp;&nbsp;New mode added successfully', classes: 'rounded'});
+            $('#reload-bt').click();
+        }
+    });
+}
+
+
+function process_newMode(monitor, x, y, rate){
+    var cvt_check = "cvt " + x + " " + y;
+    execute(cvt_check, (modeline, stderr) => {
+        modeline = modeline.split("Modeline")[1];
+        console.log("modeline:" + modeline);
+        new_mode(monitor, modeline);
     });
 }

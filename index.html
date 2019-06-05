@@ -118,6 +118,26 @@
         background-color: #2979ff;
         opacity: 0.8 !important;
       }
+
+      .rate_rounded {
+        border-radius: 25px !important;
+        background-color: #8bc34a;
+        color: white;
+        padding: 5px;
+      }
+
+      .current_rate {
+        background-color: green;
+      }
+
+      .preferred_rate {
+        background-color: #40c4ff;
+      }
+
+      .ideal_rate {
+        background-color: #ffc107;
+      }
+
       .dialog_dname {
         font-size: 2em;
         color: white;
@@ -188,7 +208,8 @@
             <label class="active" for="rate"> Refresh Rate (hz)</label>
           </div>
           <div class="input-field inline">
-            <a class="btn-floating waves-effect waves-light green btn"><i class="material-icons">add</i></i></a>
+            <a id="new_mode_bt" class="btn-floating waves-effect waves-light green btn"><i class="material-icons">add</i></i></a>
+            <a id="remove_mode_bt" class="btn-floating waves-effect waves-light pink darken btn"><i class="material-icons">remove</i></i></a>
           </div>
         </div>
         <span style='font-size:12px;'><i class="material-icons">warning</i> DMH will not apply display modes</span>  
