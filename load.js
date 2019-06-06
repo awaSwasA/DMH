@@ -11,7 +11,6 @@ $(document).ready(function(){
 })
 
 $('#new_mode_bt').on('click', () => {
-    console.log(selected_monitor_id);
     var x_param = $("#x-len").val();
     var y_param = $("#y-len").val();
     var rate_param = $("#rate").val();
@@ -96,7 +95,6 @@ function newMode_handler(evt) {
     var elem= document.querySelector('.modal');
     var instance = M.Modal.init(elem, { onCloseEnd: onModalClose });
     instance.open();
-    console.log(monitors_Group[evt.currentTarget.i]["interface"]);
     selected_monitor_id = monitors_Group[evt.currentTarget.i]["id"];
     $("#mon-title").html("<div class='dialog_dname'>&nbsp;" + monitors_Group[evt.currentTarget.i]["interface"] + "</div>");
 }
@@ -175,19 +173,36 @@ function load_current_display(){
         monitors_Group = monitor_array;
         updateMonitorList(monitor_array);
         expandList();
-        load_display_reslist();
+        var active_interface_list = [];
+        for(var i = 0;i < monitors_Group.length; ++i){
+            active_interface_list.push(monitors_Group[i]["interface"]);
+        }
+        load_display_reslist(total_monitors, active_interface_list);
         regNewMode();
     });
 }
 
-function load_display_reslist(){
+
+function active_monitor_checker(content, active_interface_list){
+    console.log(content);
+    console.log(active_interface_list);
+    for (let index = 0; index < active_interface_list.length; index++) {
+        if (content.includes(active_interface_list[index])){
+            return true;
+        }
+    }
+    return false;
+}
+
+function load_display_reslist(total_monitors, active_interface_list){
     execute('xrandr', (output) => {
         spilt_result = output.split(/connected|disconnected/);
         var monitor_array = [];
         var counter = 0;
+        var flag = false;
         spilt_result.forEach((element,index)=> {
             var profile_array = [];
-            if (index % 2 && check_line_num(element) > 2){
+            if (index % 2 && check_line_num(element) > 2 && flag){
                 var element_arr = element.split("\n");
                 var new_element = `
                 <table>
@@ -198,7 +213,6 @@ function load_display_reslist(){
                 `;
                 element_arr.forEach( (innerElement, innerIndex) => {
                     if (innerIndex!=0 && innerIndex!=element_arr.length-1){
-                        console.log(innerElement.split(/ {2,}/));
                         var reslv = innerElement.split(/ {2,}/)[1];
                         var rate = innerElement.split(/ {2,}/);
                         new_element+= "<tr><td>" + reslv + "</td><td>";
@@ -236,10 +250,15 @@ function load_display_reslist(){
                         profile_array.push(temparray);
                     }
                 });
+                console.log("profile_array=>" + profile_array);
                 new_element += "</table>";
                 monitor_array.push(new_element);
                 monitors_Group[counter]["profiles"] = [];
                 monitors_Group[counter++]["profiles"] = profile_array;
+                flag = false;
+            }else{
+                if (active_monitor_checker(element, active_interface_list))
+                    flag = true;
             }
         });
         updateResList(monitor_array);
